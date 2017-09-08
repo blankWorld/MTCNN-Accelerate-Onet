@@ -172,6 +172,7 @@ void MTCNN::BBoxPadSquare(vector<FaceInfo>& bboxes, int width, int height) {
 		float h = bbox.ymax - bbox.ymin + 1;
 		float side = h>w ? h : w;
 		bbox.xmin = round(max(bbox.xmin + (w - side)*0.5f, 0.f));
+
 		bbox.ymin = round(max(bbox.ymin + (h - side)*0.5f, 0.f));
 		bbox.xmax = round(min(bbox.xmin + side - 1, width - 1.f));
 		bbox.ymax = round(min(bbox.ymin + side - 1, height - 1.f));
@@ -187,6 +188,7 @@ void MTCNN::GenerateBBox(Blob<float>* confidence, Blob<float>* reg_box,
 	candidate_boxes_.clear();
 	for (int i = 0; i<spatical_size; i++) {
 		if (confidence_data[i] >= thresh) {
+
 			int y = i / feature_map_w_;
 			int x = i - feature_map_w_ * y;
 			FaceInfo faceInfo;
@@ -215,6 +217,9 @@ MTCNN::MTCNN(const string& proto_model_dir) {
 	RNet_->CopyTrainedLayersFrom(proto_model_dir + "/det2.caffemodel");
 	ONet_.reset(new Net<float>((proto_model_dir + "/det3.prototxt"), TEST));
 	ONet_->CopyTrainedLayersFrom(proto_model_dir + "/det3.caffemodel");
+	//ONet_.reset(new Net<float>((proto_model_dir + "/det3-half.prototxt"), TEST));
+	//ONet_->CopyTrainedLayersFrom(proto_model_dir + "/det3-half.caffemodel");
+	
 	Blob<float>* input_layer;
 	input_layer = PNet_->input_blobs()[0];
 	int num_channels_ = input_layer->channels();
